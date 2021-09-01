@@ -32,8 +32,18 @@ namespace AppointmentScheduling
             services.AddTransient<IAppointmentService, AppointmentService>();
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
+            //session 
+            services.AddDistributedMemoryCache();
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromDays(10);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
 
             services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
+        
+        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,6 +65,7 @@ namespace AppointmentScheduling
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
@@ -62,6 +73,7 @@ namespace AppointmentScheduling
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }
